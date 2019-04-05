@@ -33,7 +33,7 @@ def getListOfSeriesMessage():
     for i in range(len(seriesSettings["series"])):
         mark = "✅" if seriesSettings["series"][i]["watched"] else "❌"
         name = seriesSettings["series"][i]["name"]
-        text = mark + " " + name[:name.find("-") - 1] + " - " + name[name.find("(") + 1:name.find(")")]
+        text = mark + name[name.find("S"):name.find("E")+3]
         keyboard.append([InlineKeyboardButton(text = text, callback_data=str(i))])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -77,11 +77,13 @@ def button(update, context):
 
     query = update.callback_query
     if query.data == "Play":
+        print("Play")
         vlcPlayer.pause()
         message = getPlayMessage()
         query.edit_message_text(message["text"], reply_markup=message["reply_markup"])
 
     elif query.data == "Pause":
+        print("Pause")
         vlcPlayer.pause()
         message = getPauseMessage()
         query.edit_message_text(message["text"], reply_markup=message["reply_markup"])
@@ -95,7 +97,7 @@ def button(update, context):
         seriesNumber = int(query.data)
         name = seriesSettings["series"][seriesNumber]["name"]
         messageName = name[:name.find("-") - 1] + " - " + name[name.find("(") + 1:name.find(")")]
-        vlcPlayer.play(seriesSettings["path"] + "\\" + name, messageName)
+        vlcPlayer.play(seriesSettings["path"] + "/" + name, messageName)
 
         seriesSettings["series"][seriesNumber]["watched"] = True
         with open('settings/seriesSettings.json', 'w') as settings:
