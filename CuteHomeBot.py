@@ -30,11 +30,17 @@ vlcPlayer = VLCPlayer()
 
 def getListOfSeriesMessage():
     keyboard = []
+
+    episodes = []
     for i in range(len(seriesSettings["series"])):
         mark = "✅" if seriesSettings["series"][i]["watched"] else "❌"
         name = seriesSettings["series"][i]["name"]
-        text = mark + name[name.find("S"):name.find("E")+3]
-        keyboard.append([InlineKeyboardButton(text = text, callback_data=str(i))])
+        text = name[name.find("S"):name.find("E")+3]
+        episodes.append((text, str(i), mark))
+    episodes.sort(key = lambda x: x[0])
+
+    for ep in episodes:
+        keyboard.append([InlineKeyboardButton(text = ep[2] + ep[0], callback_data=ep[1])])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
